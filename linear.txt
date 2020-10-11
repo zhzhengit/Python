@@ -1,0 +1,46 @@
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+from matplotlib.pyplot import MultipleLocator
+x_train = np.array([[0,3],[1,3],[2,3],[3,2],[4,5],[5,3],[6,2],[7,4],[8,2]])
+y_train = np.array([95.364693,87.217205,75.195834,60.105519,49.342380,37.400286,30.56456,25.56454,5.654654])
+theta_last = [10,10,10]
+fig = plt.figure()
+ax1 = plt.axes(projection='3d')
+fig=plt.figure()
+
+def h(x):
+    return theta_last[0]*x[0]+theta_last[1]*x[1]+theta_last[2]
+def grad_sum(interation,rate,error):
+    for i in range(interation):
+        theta_guess = [0,0,0]
+        for x,y in zip(x_train,y_train):
+            theta_guess[0] = theta_guess[0] + rate*(y-h(x))*x[0]
+            theta_guess[1] = theta_guess[1] + rate*(y-h(x))*x[1]
+            theta_guess[2] = theta_guess[2] + rate*(y-h(x))*1
+           
+            if (abs(theta_last[0]-theta_guess[0])<error or abs(theta_last[1]-theta_guess[1])<error or abs(theta_last[2]-theta_guess[2])<error ):
+                print('当迭代次数i=',i,'时，达到所需精度，此时theta为：',theta_last[0],theta_last[1],theta_last[2])
+                break
+            else:
+                theta_last[0] = theta_last[0] + theta_guess[0]
+                theta_last[1] = theta_last[1] + theta_guess[1]
+                theta_last[2] = theta_last[2] + theta_guess[2]
+               
+        else:
+            print('theta0的第',i,'次迭代，theta0=',theta_last[0])
+            print('theta1的第',i,'次迭代，theta1=',theta_last[1])
+            print('theta2的第',i,'次迭代，theta2=',theta_last[2])
+            continue
+        break          
+if __name__=='__main__':
+    grad_sum(interation = 1000,rate=0.01,error= 1e-3)
+    result = [h(i) for i in  x_train]
+    print(result)
+x1=np.arange(0,9,1)
+x2=np.arange(0,9,1)
+y = theta_last[0]*x1+theta_last[1]*x2+theta_last[2]
+ax1.scatter(x1, x2, y_train, c='r')
+ax1.plot3D(x1,x2,y,'blue')
+plt.tight_layout()
+plt.show()
